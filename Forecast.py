@@ -36,7 +36,7 @@ def main():
 #    pred_ci = pred_uc.conf_int()
 
 
-    model_fit.plot_predict(5)
+    model_fit.plot_predict(dynamic=False)
 
     error = mean_squared_error(test, predictions)
     print('Test MSE: %.3f' % error)
@@ -67,3 +67,8 @@ def main():
 
 if  __name__ == '__main__':
         main()
+
+        
+        ### Template for ARIMA forecasts. For specific item procurement, look into factors that may describe the best window for data to be used in date range.
+        
+       
