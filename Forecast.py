@@ -13,18 +13,22 @@ import statsmodels.api as sm
 
 def main():
 
-    data  = read_csv('GOODDATA.csv', header = 1,index_col=0, squeeze=True,)
+    data  = read_csv('testy.csv', header = 1,index_col=0, squeeze=True,)
     ####GOODDATA2 FOR ITEM 30160HT1#####GOODDATA FOR ITEM 30110J10####
     X = data
 
-    size = int(len(X) * .268)#268
-    train, test = X[0:size], X[size:len(X)]
-    history = [x for x in train]
+    size = int(len(X) * .155)
+    #Create variable size which is initialized as only a small portion of the original array X
+
+    train, test = X[0:size], X[size:len(X)] #Introduce Train/Test
+    history = [x for x in train] #Train is now the original dataset
     predictions = list()
+
+
+    #Proceed with ARIMA Forecating Algo
     for t in range(len(test)):
-        model = ARIMA(history, order=(1,0,0))
+        model = ARIMA(history, order=(2,1,0))
         model_fit = model.fit(disp=0)
-#    print(model_fit.summary())
         output = model_fit.forecast()[0]
         yhat = output[0]
         predictions.append(yhat)
@@ -32,43 +36,30 @@ def main():
         history.append(obs)
         print('predicted=%f, expected =%f' % (yhat,obs))
 
-    #pred_uc = model_fit.forecast(steps=10)
-#    pred_ci = pred_uc.conf_int()
+    #Create a sum of the Predicted and Historical values of the past in order to compare totals.
+    predsum = sum(predictions)
+    hissum = sum(history)
 
+    print('Sum of predicted is = %f ::: Sum of observed is = %f' % (predsum,hissum))
 
+    #PLOT PREDICTIONS
     model_fit.plot_predict(dynamic=False)
 
     error = mean_squared_error(test, predictions)
     print('Test MSE: %.3f' % error)
 
-
-    #pyplot.plot(pred_uc, color = 'b', label = "Predicted")
-#    pyplot.plot(v, color = 'b')
-    pyplot.plot(test, label= "Witnessed Sales for Item 30110J10")
-    pyplot.plot(predictions, color='red', label = "Computer-Taught Predicted Sales 30110J10")
+    #PLOT HISTORY
+    pyplot.plot(test, label= "Witnessed Sales for Item 30160HT1") ##MONDAY 17 ---------- 646      PREDICTED: 900-100
+    pyplot.plot(predictions, color='red', label = "Computer-Taught Predicted Sales 30160HT1")
 
     pyplot.legend(loc = 'upper left')
     pyplot.ylabel('Sales Quantity')
-    pyplot.xlabel('Elapsed Time from 5/1/14-5/1/19')
-    pyplot.title('Teaching Algorithm for Forecasting Item Purchasing 30110J10')
+    pyplot.xlabel('Elapsed Time from 1/1/14-5/1/19')
+    pyplot.title('Teaching Algorithm for Forecasting Item Purchasing 30160HT1')
     pyplot.grid()
     pyplot.show()
     #y = [MoYrArray, CountArray]
-#    plt.scatter(MoYrArray, CountArray, s =4, c ='b', label = 'Test')
 
-#    plt.show()
-
-
-
-
-
-
-    #for i in range(len(Rated)):
 
 if  __name__ == '__main__':
         main()
-
-        
-        ### Template for ARIMA forecasts. For specific item procurement, look into factors that may describe the best window for data to be used in date range.
-        
-       
